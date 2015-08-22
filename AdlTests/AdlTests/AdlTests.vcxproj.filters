@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Adl">
+      <UniqueIdentifier>{57313a2a-e3d2-4901-a3a3-319e71daa95b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AdlPrimitives">
+      <UniqueIdentifier>{873f2a9a-2c38-47f4-a160-3f46f0bdb2ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AdlPrimitives\Math">
+      <UniqueIdentifier>{2946da3b-bab0-4289-b900-54dae17134f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AdlPrimitives\Scan">
+      <UniqueIdentifier>{858b3df5-3b1d-490d-a820-8a73d3853e96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Adl\CL">
+      <UniqueIdentifier>{8b0fa11a-9971-420b-9d2a-585f85f44929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Adl\DX11">
+      <UniqueIdentifier>{f989609a-81ac-4946-8719-57b74c07cd91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Adl\Host">
+      <UniqueIdentifier>{07953976-20f1-47ba-9285-2661fc7acca8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AdlPrimitives\Sort">
+      <UniqueIdentifier>{c198b226-4c96-4c3e-ae29-3ee34d6b5379}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UnitTests.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Adl\Adl.h">
+      <Filter>Adl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Adl\AdlConfig.h">
+      <Filter>Adl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Adl\AdlError.h">
+      <Filter>Adl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Adl\AdlKernel.h">
+      <Filter>Adl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Adl\AdlStopwatch.h">
+      <Filter>Adl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Math\Array.h">
+      <Filter>AdlPrimitives\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Math\Math.h">
+      <Filter>AdlPrimitives\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Scan\PrefixScan.h">
+      <Filter>AdlPrimitives\Scan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Scan\PrefixScanKernelsCL.h">
+      <Filter>AdlPrimitives\Scan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Scan\PrefixScanKernelsDX11.h">
+      <Filter>AdlPrimitives\Scan</Filter>
+    </ClInclude>
+    <ClInclude Include="RadixSortBenchmark.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Math\Matrix3x3.h">
+      <Filter>AdlPrimitives\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Math\Quaternion.h">
+      <Filter>AdlPrimitives\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Sort\RadixSort32.h">
+      <Filter>AdlPrimitives\Sort</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AdlPrimitives\Sort\SortData.h">
+      <Filter>AdlPrimitives\Sort</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Adl\Adl.inl">
+      <Filter>Adl</Filter>
+    </None>
+    <None Include="..\..\Adl\AdlKernel.inl">
+      <Filter>Adl</Filter>
+    </None>
+    <None Include="..\..\Adl\AdlStopwatch.inl">
+      <Filter>Adl</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Math\Float4.inl">
+      <Filter>AdlPrimitives\Math</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Scan\PrefixScan.inl">
+      <Filter>AdlPrimitives\Scan</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Scan\PrefixScanHost.inl">
+      <Filter>AdlPrimitives\Scan</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Scan\PrefixScanKernels.cl">
+      <Filter>AdlPrimitives\Scan</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Scan\PrefixScanKernels.hlsl">
+      <Filter>AdlPrimitives\Scan</Filter>
+    </None>
+    <None Include="..\..\Adl\CL\AdlCL.inl">
+      <Filter>Adl\CL</Filter>
+    </None>
+    <None Include="..\..\Adl\CL\AdlKernelUtilsCL.inl">
+      <Filter>Adl\CL</Filter>
+    </None>
+    <None Include="..\..\Adl\CL\AdlStopwatchCL.inl">
+      <Filter>Adl\CL</Filter>
+    </None>
+    <None Include="..\..\Adl\DX11\AdlDX11.inl">
+      <Filter>Adl\DX11</Filter>
+    </None>
+    <None Include="..\..\Adl\DX11\AdlKernelUtilsDX11.inl">
+      <Filter>Adl\DX11</Filter>
+    </None>
+    <None Include="..\..\Adl\DX11\AdlStopwatchDX11.inl">
+      <Filter>Adl\DX11</Filter>
+    </None>
+    <None Include="..\..\Adl\Host\AdlHost.inl">
+      <Filter>Adl\Host</Filter>
+    </None>
+    <None Include="..\..\Adl\Host\AdlStopwatchHost.inl">
+      <Filter>Adl\Host</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Sort\RadixSort32Kernels.cl">
+      <Filter>AdlPrimitives\Sort</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Sort\RadixSort32.inl">
+      <Filter>AdlPrimitives\Sort</Filter>
+    </None>
+    <None Include="..\..\AdlPrimitives\Sort\RadixSort32Host.inl">
+      <Filter>AdlPrimitives\Sort</Filter>
+    </None>
+  </ItemGroup>
+</Project>
