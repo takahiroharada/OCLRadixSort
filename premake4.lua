@@ -82,6 +82,7 @@ solution "OCLRadixSort"
 	        
 		if os.is("linux") then
 --			links {"GL", "X11", "Xi", "Xxf86vm", "Xrandr", "pthread" }
+			links { "pthread" }
 		end
 			
 		if _ACTION == "vs2012" then

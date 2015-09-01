@@ -28,6 +28,7 @@ An environmental variable needs to be set correctly to find OpenCL.
 
 ---
 # Build
+- **Execute the executable from UnitTest directory**. 
 - 64 bit executables are generated at ./dist/debug/bin/x86_64/ or ./dist/release/bin/x86_64/. 
 
 ## Windows
@@ -53,3 +54,7 @@ Product > Schema > Edit Schema, Option tab, there is Working Directory.
 `make config=debug64`
 
 `make config=release64`
+
+
+# Known Issues
+- Scan does not work for a large buffer (Unit test fails when scanning 1024K elems). 

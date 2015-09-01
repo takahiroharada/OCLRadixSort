@@ -80,7 +80,7 @@ template<typename T>
 inline
 T getRandom(const T& minV, const T& maxV)
 {
-	double r = min((double)RAND_MAX-1, (double)rand())/RAND_MAX;
+	double r = Tahoe::min2((double)RAND_MAX-1, (double)rand())/RAND_MAX;
 	T range = maxV - minV;
 	return (T)(minV + r*range);
 }
