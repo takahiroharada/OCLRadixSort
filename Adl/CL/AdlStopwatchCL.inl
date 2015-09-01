@@ -71,7 +71,7 @@ void StopwatchCL::getMs( float* times, int capacity )
 
 	for(int i=0; i<capacity; i++) times[i] = 0.f;
 
-	for(int i=0; i<min(capacity, m_idx); i++)
+	for(int i=0; i<min2(capacity, m_idx); i++)
 	{
 		times[i] = (float)(1000*(m_t[i+1].QuadPart - m_t[i].QuadPart))/m_frequency.QuadPart;
 	}

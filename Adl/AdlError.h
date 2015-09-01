@@ -14,14 +14,21 @@
 	#include <stdio.h>
 #endif
 
-
+#if 1
+#include <Tahoe/Math/Error.h>
+#else
 namespace adl
 {
-
 #ifdef _DEBUG
+	#ifdef _WIN32
 	#define ADLASSERT(x) if(!(x)){__debugbreak(); }
+	#else
+	#define ADLASSERT(x) if(!(x)){assert(0); }
+	#endif
+	#define ADLWARN(x) { debugPrintf(x); printf(x);}
 #else
 	#define ADLASSERT(x) if(x){}
+	#define ADLWARN(x) {x;}
 #endif
 
 #ifdef _DEBUG
@@ -61,8 +68,7 @@ namespace adl
 	{
 	}
 #endif
-
 };
-
+#endif
 #endif
 
