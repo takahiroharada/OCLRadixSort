@@ -27,8 +27,11 @@ An environmental variable needs to be set correctly to find OpenCL.
     - tools: Premake related
 
 ---
-# Build
+# Run The Unit Test
 - **Execute the executable from UnitTest directory**. 
+
+---
+# Build
 - 64 bit executables are generated at ./dist/debug/bin/x86_64/ or ./dist/release/bin/x86_64/. 
 
 ## Windows
@@ -49,6 +52,7 @@ Product > Schema > Edit Schema, Option tab, there is Working Directory.
 ## Linux
 - Create Makefile
 
+`chmod +x tools/premake4/linux64/premake4`
 `./tools/premake4/linux64/premake4 gmake`
 
 `make config=debug64`
