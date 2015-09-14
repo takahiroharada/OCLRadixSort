@@ -15,8 +15,7 @@ namespace adl
 //==========================
 //	KernelManager
 //==========================
-Kernel* KernelManager::query(const Device* dd, const char* fileName, const char* funcName, const char* option, const char* src,
-	bool cacheKernel)
+Kernel* KernelManager::query(const Device* dd, const char* fileName, const char* funcName, const char* option, const char** srcList, int nSrc, bool cacheKernel)
 {
 	const int charSize = 1024*2;
 	KernelManager* s_kManager = this;
@@ -26,12 +25,12 @@ Kernel* KernelManager::query(const Device* dd, const char* fileName, const char*
 	{
 	case TYPE_CL:
 #if defined(ADL_ENABLE_CL)
-		sprintf_s(fullFineName,charSize,"%s.cl", fileName);
+		sprintf(fullFineName,"%s.cl", fileName);
 		break;
 #endif
 #if defined(ADL_ENABLE_DX11)
 	case TYPE_DX11:
-		sprintf_s(fullFineName,charSize,"%s.hlsl", fileName);
+		sprintf(fullFineName,"%s.hlsl", fileName);
 		break;
 #endif
 	default:
@@ -42,12 +41,22 @@ Kernel* KernelManager::query(const Device* dd, const char* fileName, const char*
 	char mapName[charSize];
 	{
 		if( option )
-			sprintf_s(mapName, charSize, "%d%s%s%s", (int)dd->getContext(), fullFineName, funcName, option);
+			sprintf(mapName, "%d%s%s%s", (int)(long long)dd->getContext(), fullFineName, funcName, option);
 		else
-			sprintf_s(mapName, charSize, "%d%s%s", (int)dd->getContext(), fullFineName, funcName);
+			sprintf(mapName, "%d%s%s", (int)(long long)dd->getContext(), fullFineName, funcName);
 	}
 
 	std::string str(mapName);
+
+	if( !cacheKernel )
+	{
+		if( s_kManager->m_map.count( str ) )
+		{
+			Kernel* k = s_kManager->m_map[str];
+			s_kManager->m_map.erase( str );
+			delete k;
+		}
+	}
 
 	KMap::iterator iter = s_kManager->m_map.find( str );
 
@@ -62,11 +71,13 @@ Kernel* KernelManager::query(const Device* dd, const char* fileName, const char*
 		case TYPE_CL:
 			{
 				KernelBuilder<TYPE_CL> builder;
-				if( src )
-					builder.setFromSrc( dd, src, option );
+				if( srcList )
+					builder.setFromStringLists( dd, srcList, nSrc, option, fileName, cacheKernel );
+//					builder.setFromSrc( dd, src, option );
 				else
 					builder.setFromFile( dd, fileName, option, true, cacheKernel );
 				builder.createKernel( funcName, *kernelOut );
+				kernelOut->m_funcName = funcName;
 			}
 			break;
 #endif
@@ -96,6 +107,32 @@ Kernel* KernelManager::query(const Device* dd, const char* fileName, const char*
 	return kernelOut;
 }
 
+void KernelManager::reset()
+{
+	for(KMap::iterator iter = m_map.begin(); iter != m_map.end(); iter++)
+	{
+		Kernel* k = iter->second;
+		switch( k->m_type )
+		{
+#if defined(ADL_ENABLE_CL)
+		case TYPE_CL:
+			KernelBuilder<TYPE_CL>::deleteKernel( *k );
+			break;
+#endif
+#if defined(ADL_ENABLE_DX11)
+		case TYPE_DX11:
+			KernelBuilder<TYPE_DX11>::deleteKernel( *k );
+			break;
+#endif
+		default:
+			ADLASSERT(0);
+			break;
+		};
+		delete k;
+	}
+	m_map.clear();
+}
+
 KernelManager::~KernelManager()
 {
 	for(KMap::iterator iter = m_map.begin(); iter != m_map.end(); iter++)
@@ -117,6 +154,7 @@ KernelManager::~KernelManager()
 			ADLASSERT(0);
 			break;
 		};
+		delete k;
 	}
 }
 
@@ -126,6 +164,14 @@ KernelManager::~KernelManager()
 
 #if defined(ADL_ENABLE_DX11)
 	#if defined(ADL_ENABLE_CL)
+	#define SELECT_DEVICEDATA( type, func ) \
+		switch( type ) \
+		{ \
+		case TYPE_CL: ((DeviceCL*)m_device)->func; break; \
+		case TYPE_DX11: ((DeviceDX11*)m_device)->func; break; \
+		case TYPE_HOST: ((DeviceHost*)m_device)->func; break; \
+		default: ADLASSERT(0); break; \
+		}
 	#define SELECT_LAUNCHER( type, func ) \
 		switch( type ) \
 		{ \
@@ -134,6 +180,13 @@ KernelManager::~KernelManager()
 		default: ADLASSERT(0); break; \
 		};
 	#else
+	#define SELECT_DEVICEDATA( type, func ) \
+		switch( type ) \
+		{ \
+		case TYPE_DX11: ((DeviceDX11*)m_device)->func; break; \
+		case TYPE_HOST: ((DeviceHost*)m_device)->func; break; \
+		default: ADLASSERT(0); break; \
+		}
 	#define SELECT_LAUNCHER( type, func ) \
 		switch( type ) \
 		{ \
@@ -143,6 +196,13 @@ KernelManager::~KernelManager()
 	#endif
 #else
 	#if defined(ADL_ENABLE_CL)
+	#define SELECT_DEVICEDATA( type, func ) \
+		switch( type ) \
+		{ \
+		case TYPE_CL: ((DeviceCL*)m_device)->func; break; \
+		case TYPE_HOST: ((DeviceHost*)m_device)->func; break; \
+		default: ADLASSERT(0); break; \
+		}
 	#define SELECT_LAUNCHER( type, func ) \
 		switch( type ) \
 		{ \
@@ -150,6 +210,12 @@ KernelManager::~KernelManager()
 		default: ADLASSERT(0); break; \
 		};
 	#else
+	#define SELECT_DEVICEDATA( type, func ) \
+		switch( type ) \
+		{ \
+		case TYPE_HOST: ((DeviceHost*)m_device)->func; break; \
+		default: ADLASSERT(0); break; \
+		}
 	#define SELECT_LAUNCHER( type, func ) \
 		switch( type ) \
 		{ \
@@ -158,7 +224,20 @@ KernelManager::~KernelManager()
 	#endif
 #endif
 
-Launcher::Launcher(const Device *dd, char *fileName, char *funcName, char *option)
+__inline
+SyncObject::SyncObject( const Device* device ) : m_device( device )
+{
+//	m_device->allocateSyncObj( m_ptr );
+	SELECT_DEVICEDATA( m_device->m_type, allocateSyncObj( m_ptr ) );
+}
+
+__inline
+SyncObject::~SyncObject()
+{
+//	m_device->deallocateSyncObj( m_ptr );
+	SELECT_DEVICEDATA( m_device->m_type, deallocateSyncObj( m_ptr ) );
+}
+Launcher::Launcher(const Device *dd, const char *fileName, const char *funcName, const char *option)
 {
 	m_kernel = dd->getKernel( fileName, funcName, option );
 	m_deviceData = dd;
@@ -166,7 +245,7 @@ Launcher::Launcher(const Device *dd, char *fileName, char *funcName, char *optio
 	m_idxRw = 0;
 }
 
-Launcher::Launcher(const Device* dd, Kernel* kernel)
+Launcher::Launcher(const Device* dd, const Kernel* kernel)
 {
 	m_kernel = kernel;
 	m_deviceData = dd;
@@ -185,16 +264,35 @@ void Launcher::setConst( Buffer<T>& constBuff, const T& consts )
 	SELECT_LAUNCHER( m_deviceData->m_type, setConst( this, constBuff, consts ) );
 }
 
-void Launcher::launch1D( int numThreads, int localSize )
+template<typename T>
+void Launcher::setConst( const T& consts )
 {
-	SELECT_LAUNCHER( m_deviceData->m_type, launch2D( this, numThreads, 1, localSize, 1 ) );
+	SELECT_LAUNCHER( m_deviceData->m_type, setConst( this, consts ) );
 }
 
-void Launcher::launch2D(  int numThreadsX, int numThreadsY, int localSizeX, int localSizeY )
+void Launcher::launch1D( int numThreads, int localSize, SyncObject* syncObj )
 {
-	SELECT_LAUNCHER( m_deviceData->m_type, launch2D( this, numThreadsX, numThreadsY, localSizeX, localSizeY ) );
+	SELECT_LAUNCHER( m_deviceData->m_type, launch2D( this, numThreads, 1, localSize, 1, syncObj ) );
 }
+
+void Launcher::launch2D(  int numThreadsX, int numThreadsY, int localSizeX, int localSizeY, SyncObject* syncObj )
+{
+	SELECT_LAUNCHER( m_deviceData->m_type, launch2D( this, numThreadsX, numThreadsY, localSizeX, localSizeY, syncObj ) );
+}
+
+void Launcher::serializeToFile( const char* filePath, const Launcher::ExecInfo& info )
+{
+	SELECT_LAUNCHER( m_deviceData->m_type, serializeToFile( this, filePath, info ) );
+}
+
+Launcher::ExecInfo Launcher::deserializeFromFile( const char* filePath, int buffCap, Buffer<char>** buffsOut, int* nBuffs )
+{
+	Launcher::ExecInfo info;
+	SELECT_LAUNCHER( m_deviceData->m_type, deserializeFromFile( this, filePath, buffCap, buffsOut, nBuffs, info ) );
+	return info;
+}
+
 
 #undef SELECT_LAUNCHER
-
+#undef SELECT_DEVICEDATA
 };

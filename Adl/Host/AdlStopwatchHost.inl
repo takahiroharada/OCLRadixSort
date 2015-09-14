@@ -24,8 +24,8 @@ class StopwatchHost : public StopwatchBase
 		void getMs( float* times, int capacity );
 
 	private:
-		LARGE_INTEGER m_frequency;
-		LARGE_INTEGER m_t[CAPACITY];
+		TIME_TYPE m_frequency;
+		TIME_TYPE m_t[CAPACITY];
 };
 
 __inline
@@ -38,20 +38,23 @@ __inline
 void StopwatchHost::init( const Device* deviceData )
 {
 	m_device = deviceData;
-	QueryPerformanceFrequency( &m_frequency );
+//	QueryPerformanceFrequency( &m_frequency );
+	QUERY_FREQ( m_frequency );
 }
 
 __inline
 void StopwatchHost::start()
 {
 	m_idx = 0;
-	QueryPerformanceCounter(&m_t[m_idx++]);
+//	QueryPerformanceCounter(&m_t[m_idx++]);
+	RECORD( m_t[m_idx++] );
 }
 
 __inline
 void StopwatchHost::split()
 {
-	QueryPerformanceCounter(&m_t[m_idx++]);
+//	QueryPerformanceCounter(&m_t[m_idx++]);
+	RECORD( m_t[m_idx++] );
 }
 
 __inline
@@ -63,7 +66,8 @@ void StopwatchHost::stop()
 __inline
 float StopwatchHost::getMs()
 {
-	return (float)(1000*(m_t[1].QuadPart - m_t[0].QuadPart))/m_frequency.QuadPart;
+//	return (float)(1000*(m_t[1].QuadPart - m_t[0].QuadPart))/m_frequency.QuadPart;
+	return (float)( GET_TIME( m_t[1] ) - GET_TIME( m_t[0] ) )/GET_FREQ( m_frequency );
 }
 
 __inline
@@ -71,9 +75,10 @@ void StopwatchHost::getMs(float* times, int capacity)
 {
 	for(int i=0; i<capacity; i++) times[i] = 0.f;
 
-	for(int i=0; i<min(capacity, m_idx-1); i++)
+	for(int i=0; i<min2(capacity, m_idx-1); i++)
 	{
-		times[i] = (float)(1000*(m_t[i+1].QuadPart - m_t[i].QuadPart))/m_frequency.QuadPart;
+//		times[i] = (float)(1000*(m_t[i+1].QuadPart - m_t[i].QuadPart))/m_frequency.QuadPart;
+		times[i] = (float)( GET_TIME( m_t[i+1] ) - GET_TIME( m_t[i] ) )/GET_FREQ( m_frequency );
 	}
 }
 
