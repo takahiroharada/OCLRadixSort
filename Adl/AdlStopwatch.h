@@ -2,7 +2,24 @@
 		2011 Takahiro Harada
 */
 
-#include <windows.h>
+#if defined(WIN32)
+	#include <windows.h>
+	
+	#define TIME_TYPE LARGE_INTEGER
+	#define QUERY_FREQ(f) QueryPerformanceFrequency(&f)
+	#define RECORD(t) QueryPerformanceCounter(&t)
+	#define GET_TIME(t) (t).QuadPart*1000.0
+	#define GET_FREQ(f)	(f).QuadPart
+#else
+	#include <sys/time.h> 
+	
+	#define TIME_TYPE timeval
+	#define QUERY_FREQ(f) f.tv_sec = 1
+	#define RECORD(t) gettimeofday(&t, 0)
+	#define GET_TIME(t) ((t).tv_sec*1000.0+(t).tv_usec/1000.0)
+	#define GET_FREQ(f)	1.0
+#endif
+
 
 namespace adl
 {
@@ -16,19 +33,19 @@ struct StopwatchBase
 	__inline
 	virtual ~StopwatchBase(){}
 
-	__inline
-	virtual void init( const Device* deviceData ) = 0;
-	__inline
+//	__inline
+	virtual void init( const Device* deviceData ){}
+//	__inline
 	virtual void start() = 0;
-	__inline
+//	__inline
 	virtual void split() = 0;
-	__inline
+//	__inline
 	virtual void stop() = 0;
-	__inline
+//	__inline
 	virtual float getMs() = 0;
-	__inline
+//	__inline
 	virtual void getMs( float* times, int capacity ) = 0;
-	__inline
+//	__inline
 	int getNIntervals() const{ return m_idx-1;}
 
 	enum
