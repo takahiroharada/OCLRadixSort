@@ -6,6 +6,15 @@ Only runs on **AMD** GPU as it is assuming the vector width is **64**.
 
 See [Introduction to GPU Radix Sort](./docs/Introduction to GPU Radix Sort.pdf) for implementation detail. 
 
+```
+@article{harada2011introduction,
+   title={Introduction to GPU Radix Sort},
+   author={Harada, T. and Howes, L.},
+   booktitle={Heterogeneous Computing with OpenCL},
+   year={2011}
+}
+```
+
 # Set up OpenCL
 An environmental variable needs to be set correctly to find OpenCL. 
 - AMD
